@@ -1,0 +1,97 @@
+
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+  
+  auth-service:
+    build: ./services/auth_service       # Updated path
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./services/auth_service:/app    # Updated path
+      - /app/node_modules
+    env_file:
+      - ./services/auth_service/.env    # Updated path
+    networks:
+      - app-network
+  
+  event-service:
+    build: ./services/event_service     # Updated path
+    ports:
+      - "5003:5003"
+    volumes:
+      - ./services/event_service:/app   # Updated path
+      - /app/node_modules
+    env_file:
+      - ./services/event_service/.env   # Updated path
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    networks:
+      - app-network
+ 
+  booking-service:
+    build: ./services/booking_service   # Updated path
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./services/booking_service:/app # Updated path
+      - /app/node_modules
+    env_file:
+      - ./services/booking_service/.env # Updated path
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - EVENT_SERVICE_URL=http://event-service:5003
+    depends_on:
+      - redis
+      - event-service
+    networks:
+      - app-network
+ 
+  gateway:
+    build: ./gateway
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./gateway:/app
+      - /app/node_modules
+    env_file:
+      - ./gateway/.env
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - EVENT_SERVICE_URL=http://event-service:5003
+      - BOOKING_SERVICE_URL=http://booking-service:5002
+    depends_on:
+      - auth-service
+      - event-service
+      - booking-service
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend                   # Correct (it's at root level)
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app                 # Correct
+      - /app/node_modules
+      - /app/.next
+    env_file:
+      - ./frontend/.env.local
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:5000
+      - GATEWAY_URL=http://gateway:5000
+      - WATCHPACK_POLLING=true
+    depends_on:
+      - gateway
+    networks:
+      - app-network
+ 
+networks:
+  app-network:
+    driver: bridge

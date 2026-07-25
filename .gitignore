@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment variables — never commit real secrets
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+build/
+.next/
+
+# Prisma generated client (regenerated via `npx prisma generate`, no need to commit)
+generated/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# Docker
+docker-compose.override.yml
