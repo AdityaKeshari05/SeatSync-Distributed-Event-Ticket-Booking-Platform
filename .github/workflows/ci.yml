@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+    build-and-check:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                service:
+                    - services/auth_service
+                    - services/event_service
+                    - services/booking_service
+                    - gateway
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                node-version: '20'
+                cache: 'npm'
+                cache-dependency-path: ${{ matrix.service }}/package-lock.json
+            
+            - name: Install dependencies
+              working-directory: ${{ matrix.service }}
+              run: npm ci
+
+            - name: Type check
+              working-directory: ${{ matrix.service }}
+              run: npx tsc --noEmit
+
+            - name: Build Docker image (verification only, not pushed yet)
+              run: docker build -t temp-${{ matrix.service }}-check ${{ matrix.service }}
+                    
