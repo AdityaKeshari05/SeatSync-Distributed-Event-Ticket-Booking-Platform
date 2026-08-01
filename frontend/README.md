@@ -19,7 +19,7 @@ Also ensure PostgreSQL and Redis are available per each service's `.env`.
 
 ```bash
 cd frontend
-cp .env.local.example .env.local   # optional if .env.local already exists
+cp .env.example .env.local   # optional if .env.local already exists
 npm install
 npm run dev
 ```
@@ -38,7 +38,9 @@ Open [http://localhost:3000](http://localhost:3000).
 | Register / Login | `POST /auth/register`, `POST /auth/login` |
 | Events list | `GET /events/` |
 | Event detail + seat map | `GET /events/event/:id/seats` |
-| Select / book / release | `POST /seats/:seatId/select|book|release` |
+| Select / release hold | `POST /seats/:seatId/select|release` |
+| Razorpay checkout | `POST /seats/:seatId/checkout` |
+| Booking confirmation | Socket.io `seatUpdated` with `status: "booked"` (server-verified) |
 | Live seat updates | Socket.io `joinEvent` + `seatUpdated` |
 | Create event (admin) | `POST /events/event` |
 | System status | Gateway + service health endpoints |

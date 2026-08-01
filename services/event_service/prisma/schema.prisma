@@ -19,25 +19,27 @@ enum SeatStatus {
 }
 
 model Event {
-  id         String   @id @default(uuid())
-  title      String
-  venue      String
-  eventDate  DateTime
-  totalSeats Int
-  createdBy  String
-  createdAt  DateTime @default(now())
-  seats    Seat[]
+  id           String     @id @default(uuid())
+  title        String
+  venue        String
+  eventDate    DateTime
+  totalSeats   Int
+  priceInPaise Int
+  createdBy    String
+  createdAt    DateTime   @default(now())
+  seats Seat[]
  
   @@map("events")
 }
 
 model Seat {
-  id         String     @id @default(uuid())
-  eventId    String
-  seatNumber String
-  seatIndex  Int 
-  status     SeatStatus @default(available)
-  createdAt  DateTime   @default(now())
+  id           String     @id @default(uuid())
+  eventId      String
+  seatNumber   String
+  seatIndex    Int 
+  priceInPaise Int
+  status       SeatStatus @default(available)
+  createdAt    DateTime   @default(now())
 
   event   Event    @relation(fields: [eventId], references: [id])
 

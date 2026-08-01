@@ -46,7 +46,9 @@ const flow = [
   { step: "1", title: "Browse events", detail: "GET /events/ — public event listing from the event service." },
   { step: "2", title: "View seat map", detail: "GET /events/event/:id/seats — load availability for an event." },
   { step: "3", title: "Select (hold)", detail: "POST /seats/:seatId/select — lock seat for 5 minutes (auth required)." },
-  { step: "4", title: "Book or release", detail: "POST /seats/:seatId/book or /release — confirm or cancel the hold." },
+  { step: "4", title: "Pay via Razorpay", detail: "POST /seats/:seatId/checkout — create payment order for held seat." },
+  { step: "5", title: "Server confirms", detail: "Live seatUpdated (status: booked) after server-side payment verification." },
+  { step: "6", title: "Release (optional)", detail: "POST /seats/:seatId/release — cancel hold before paying." },
 ];
 
 export default function HomePage() {

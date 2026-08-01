@@ -6,6 +6,7 @@ export interface SeatData {
     eventId: string;
     seatNumber: string;
     seatIndex: number;
+    priceInPaise: number;
     status: 'available' | 'locked' | 'booked';
     createdAt: string;
 }

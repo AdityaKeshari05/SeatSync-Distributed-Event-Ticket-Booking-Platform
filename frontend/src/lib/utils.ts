@@ -55,3 +55,8 @@ export function getMinEventDate(): string {
   tomorrow.setHours(19, 0, 0, 0);
   return tomorrow.toISOString().slice(0, 16);
 }
+
+/** Normalize IDs for reliable string comparison (UUID casing, whitespace). */
+export function normalizeSeatId(id: string | null | undefined): string {
+  return String(id ?? "").trim().toLowerCase();
+}

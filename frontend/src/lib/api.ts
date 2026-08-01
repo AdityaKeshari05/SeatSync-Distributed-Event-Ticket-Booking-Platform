@@ -1,7 +1,7 @@
 import type {
   ApiError,
   AuthUser,
-  Booking,
+  CheckoutOrder,
   CreateEventPayload,
   Event,
   HealthResponse,
@@ -100,19 +100,15 @@ export const api = {
         token
       ),
 
-    book: (seatId: string, token: string) =>
-      request<{ booking: Booking }>(
-        `/seats/${seatId}/book`,
-        { method: "POST" },
-        token
-      ),
-
     release: (seatId: string, token: string) =>
       request<{ message: string; seatId: string }>(
         `/seats/${seatId}/release`,
         { method: "POST" },
         token
       ),
+
+    checkout: (seatId: string, token: string) =>
+      request<CheckoutOrder>(`/seats/${seatId}/checkout`, { method: "POST" }, token),
   },
 };
 

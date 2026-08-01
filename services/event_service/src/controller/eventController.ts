@@ -11,7 +11,10 @@ export const createEvent = async (req: Request, res: Response) =>{
         return res.status(400).json({message: 'Validation failed' , error: z.flattenError(parsed.error).fieldErrors});
     }
 
-    const { title, venue, eventDate, totalSeats } = parsed.data;
+    const { title, venue, eventDate, totalSeats, priceInRupees } = parsed.data;
+
+    const priceInPaise = Math.round(priceInRupees * 100);
+    
     try{
         const event = await prisma.$transaction(async (tx) => {
             const createdEvent = await tx.event.create({
@@ -20,6 +23,7 @@ export const createEvent = async (req: Request, res: Response) =>{
                     venue,
                     eventDate,
                     totalSeats,
+                    priceInPaise,
                     createdBy: req.user!.userId
                 }
             });
@@ -28,6 +32,7 @@ export const createEvent = async (req: Request, res: Response) =>{
                 eventId: createdEvent.id,
                 seatNumber: `Seat ${i+1}`,
                 seatIndex: i+1,
+                priceInPaise,
             }));
 
             await tx.seat.createMany({ data: seatData});

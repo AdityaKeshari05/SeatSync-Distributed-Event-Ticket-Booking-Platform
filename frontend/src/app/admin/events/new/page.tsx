@@ -19,6 +19,7 @@ export default function CreateEventPage() {
   const [venue, setVenue] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [totalSeats, setTotalSeats] = useState("50");
+  const [priceInRupees, setPriceInRupees] = useState("500");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -76,6 +77,7 @@ export default function CreateEventPage() {
     setIsSubmitting(true);
 
     const seatsNum = parseInt(totalSeats, 10);
+    const priceNum = parseInt(priceInRupees, 10);
 
     try {
       const { event } = await api.events.create(
@@ -84,10 +86,11 @@ export default function CreateEventPage() {
           venue,
           eventDate: new Date(eventDate).toISOString(),
           totalSeats: seatsNum,
+          priceInRupees: priceNum,
         },
         user.token
       );
-      setSuccess(`Event "${event.title}" created with ${event.totalSeats} seats.`);
+      setSuccess(`Event "${event.title}" created with ${event.totalSeats} seats at ₹${priceNum} each.`);
       setTimeout(() => router.push(`/events/${event.id}`), 1500);
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -121,7 +124,7 @@ export default function CreateEventPage() {
       <Card>
         <CardHeader>
           <p className="text-sm text-slate-400">
-            Creates the event and generates seats (1–1000) in the event service.
+            Creates the event, sets seat price, and generates seats (1–1000) in the event service.
           </p>
         </CardHeader>
         <CardBody>
@@ -151,22 +154,34 @@ export default function CreateEventPage() {
               minLength={3}
               placeholder="City Arena"
             />
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              <Input
+                label="Ticket price (₹ in Rupees)"
+                type="number"
+                min={1}
+                value={priceInRupees}
+                onChange={(e) => setPriceInRupees(e.target.value)}
+                error={fieldErrors.priceInRupees}
+                required
+                placeholder="500"
+              />
+              <Input
+                label="Total seats"
+                type="number"
+                min={1}
+                max={1000}
+                value={totalSeats}
+                onChange={(e) => setTotalSeats(e.target.value)}
+                error={fieldErrors.totalSeats}
+                required
+              />
+            </div>
             <Input
               label="Event date & time"
               type="datetime-local"
               value={eventDate}
               onChange={(e) => setEventDate(e.target.value)}
               error={fieldErrors.eventDate}
-              required
-            />
-            <Input
-              label="Total seats"
-              type="number"
-              min={1}
-              max={1000}
-              value={totalSeats}
-              onChange={(e) => setTotalSeats(e.target.value)}
-              error={fieldErrors.totalSeats}
               required
             />
             <Button type="submit" className="w-full" isLoading={isSubmitting}>

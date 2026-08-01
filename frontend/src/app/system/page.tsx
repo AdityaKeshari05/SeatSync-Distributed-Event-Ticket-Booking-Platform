@@ -64,6 +64,7 @@ const apiEndpoints = [
   { method: "POST", path: "/seats/:seatId/select", auth: "User JWT", service: "Booking" },
   { method: "POST", path: "/seats/:seatId/book", auth: "User JWT", service: "Booking" },
   { method: "POST", path: "/seats/:seatId/release", auth: "User JWT", service: "Booking" },
+  { method: "POST", path: "/seats/:seatId/checkout", auth: "User JWT", service: "Booking" },
 ];
 
 export default function SystemPage() {

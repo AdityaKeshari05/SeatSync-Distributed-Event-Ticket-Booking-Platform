@@ -16,6 +16,7 @@ export interface Event {
   venue: string;
   eventDate: string;
   totalSeats: number;
+  priceInPaise?: number;
   createdBy: string;
   createdAt: string;
 }
@@ -65,9 +66,25 @@ export interface CreateEventPayload {
   venue: string;
   eventDate: string;
   totalSeats: number;
+  priceInRupees: number;
 }
 
 export interface SeatUpdatedPayload {
   seatId: string;
   status: SeatStatus;
 }
+
+export interface CheckoutOrder {
+  orderId: string;
+  orderAmount: number;
+  orderCurrency: string;
+  keyId: string;
+}
+
+export type CheckoutPhase =
+  | "held"
+  | "checkout_loading"
+  | "razorpay_open"
+  | "confirming"
+  | "confirm_pending"
+  | "confirmed";

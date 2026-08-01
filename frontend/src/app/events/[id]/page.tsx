@@ -114,7 +114,7 @@ export default function EventDetailPage() {
           </span>
         </div>
         <p className="mt-4 font-mono text-xs text-slate-500">
-          Seats: GET /events/event/{event.id.slice(0, 8)}…/seats · Booking: POST /seats/:seatId/select|book|release
+          Seats: GET /events/event/{event.id.slice(0, 8)}…/seats · Hold: POST /seats/:seatId/select|release · Pay: POST /seats/:seatId/checkout
         </p>
       </header>
 
