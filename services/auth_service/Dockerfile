@@ -18,7 +18,8 @@ RUN npm install
 
 # NOW copy the rest of your actual source code.
 COPY . .
-
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
 # Generate the Prisma client inside the container — remember, this is a
 # required step any time schema.prisma changes, and the container starts
 # from a blank slate every time, so it needs to happen during the build.

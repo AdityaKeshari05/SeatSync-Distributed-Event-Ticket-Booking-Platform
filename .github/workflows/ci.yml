@@ -49,5 +49,5 @@ jobs:
               run: npx tsc --noEmit
 
             - name: Build Docker image (verification only, not pushed yet)
-              run: docker build -t temp-${{ matrix.service }}-check ${{ matrix.service }}
+              run:  docker build --build-arg DATABASE_URL="$DATABASE_URL" -t temp-${{ matrix.service }}-check ${{ matrix.service }}
                     
