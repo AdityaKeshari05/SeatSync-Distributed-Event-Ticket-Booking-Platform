@@ -32,6 +32,15 @@ jobs:
               working-directory: ${{ matrix.service }}
               run: npm ci
 
+            - name: Generate Prisma client (if applicable)
+              working-directory: ${{ matrix.service }}
+              run: |
+                if [ -f "prisma/schema.prisma" ]; then
+                  npx prisma generate
+                else
+                    echo "No Prisma schema found for ${{ matrix.service }}, skipping Prisma client generation."
+                fi
+            
             - name: Type check
               working-directory: ${{ matrix.service }}
               run: npx tsc --noEmit
