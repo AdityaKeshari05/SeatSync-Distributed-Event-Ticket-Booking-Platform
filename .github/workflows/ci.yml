@@ -15,12 +15,17 @@ jobs:
 
         strategy:
             matrix:
-                service:
-                    - services/auth_service
-                    - services/event_service
-                    - services/booking_service
-                    - gateway
-                    - frontend
+                include:
+                    - path: services/auth-service
+                      image: seatsync-auth-service
+                    - path: services/booking-service
+                      image: seatsync-booking-service
+                    - path: services/event-service
+                      image: seatsync-event-service
+                    - path: frontend
+                      image: seatsync-frontend
+                    - path: gateway
+                      image: seatsync-gateway
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
@@ -30,30 +35,47 @@ jobs:
               with: 
                 node-version: '22'
                 cache: 'npm'
-                cache-dependency-path: ${{ matrix.service }}/package-lock.json
+                cache-dependency-path: ${{ matrix.path }}/package-lock.json
             
             - name: Install dependencies
-              working-directory: ${{ matrix.service }}
+              working-directory: ${{ matrix.path }}
               run: npm ci
 
             - name: Generate Prisma client (if applicable)
-              working-directory: ${{ matrix.service }}
+              working-directory: ${{ matrix.path }}
               run: |
                 if [ -f "prisma/schema.prisma" ]; then
                   npx prisma generate
                 else
-                    echo "No Prisma schema found for ${{ matrix.service }}, skipping Prisma client generation."
+                    echo "No Prisma schema found for ${{ matrix.path }}, skipping Prisma client generation."
                 fi
             
             - name: Type check
-              working-directory: ${{ matrix.service }}
+              working-directory: ${{ matrix.path }}
               run: npx tsc --noEmit
 
             - name: Next.js build check
-              if: matrix.service == 'frontend'
-              working-directory: ${{ matrix.service }}
+              if: matrix.path == 'frontend'
+              working-directory: ${{ matrix.path }}
               run: npm run build
-
-            - name: Build Docker image (verification only, not pushed yet)
-              run:  docker build --build-arg DATABASE_URL="$DATABASE_URL" -t temp-${{ matrix.service }}-check ${{ matrix.service }}
-                    
+            
+            - name: Log in to Docker Hub
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              uses: docker/login-action@v3
+              with:
+                username: ${{ secrets.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKERHUB_TOKEN }}
+            
+            - name: Build Docker image
+              run: |
+                docker build \
+                 --build-arg DATABASE_URL="$DATABASE_URL" \
+                 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest \
+                 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }} \
+                  ${{ matrix.path }}
+            
+            - name: Push Docker image
+              if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+              run: |
+                docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:latest
+                docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.image }}:${{ github.sha }}
