@@ -16,11 +16,11 @@ jobs:
         strategy:
             matrix:
                 include:
-                    - path: services/auth-service
+                    - path: services/auth_service
                       image: seatsync-auth-service
-                    - path: services/booking-service
+                    - path: services/booking_service
                       image: seatsync-booking-service
-                    - path: services/event-service
+                    - path: services/event_service
                       image: seatsync-event-service
                     - path: frontend
                       image: seatsync-frontend
