@@ -12,4 +12,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Run in dev mode for hot-reloading
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
