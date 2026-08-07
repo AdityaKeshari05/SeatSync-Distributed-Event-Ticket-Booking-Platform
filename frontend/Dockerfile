@@ -8,7 +8,7 @@ RUN npm install
 
 # Copy source code
 COPY . .
-
+RUN npm run build
 EXPOSE 3000
 
 # Run in dev mode for hot-reloading
