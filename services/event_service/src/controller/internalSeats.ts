@@ -7,8 +7,10 @@ const seatIdParamSchema = z.object({
 });
 
 export const getSeatInternal = async (req: Request, res: Response) =>{
+    console.log('getSeatInternal received params:', req.params);
       const parsed = seatIdParamSchema.safeParse(req.params);
       if(!parsed.success){
+        console.log('Validation failed for:', req.params.seatId);
         return res.status(400).json({ message: 'Invalid seat ID' });
       }
       
